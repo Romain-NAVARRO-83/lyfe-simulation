@@ -2,6 +2,7 @@
     --entitySize:30px;
     --mainPadding: 3rem;
     --darken: rgba(0,0,0,.5);
+    --transition: all ease-out .5s;
 }
 body{
     background: rgb(29, 33, 33);
@@ -74,4 +75,26 @@ footer{
 }
 .foodItem.eaten{
     background-color: red;
+}
+#readMeContainer{
+    position:fixed;
+    display:flex;
+    right:0;
+    width:66vw;
+    z-index: 9;
+    margin-right:calc(-66vw + 50px);
+    transition: var(--transition);
+}
+/* #readMeContainer::before{
+    content:"Readme";
+    display:block;
+    flex-basis:50px;
+    cursor: pointer;
+} */
+#readMeContainer.expanded{
+    margin-right:0;
+    transition: var(--transition);
+}
+#readMeFrame{
+    flex-grow:2;
 }

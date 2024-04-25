@@ -1,3 +1,4 @@
+
 const slateObject = {
   entityId: [],
   entityX: [],
@@ -18,6 +19,8 @@ const entity = {
   constructEntity: function () {
     const myEntity = document.createElement("div");
     myEntity.className = "entity";
+    myEntity.classList.add("animate__animated");
+    myEntity.classList.add("animate__bounceIn");
     myEntity.style.width = entity.size + "px";
     return myEntity;
   },
@@ -163,7 +166,7 @@ const entity = {
   testFoodItemProximity: function (entityId = 1) {
 
 
-    // console.log(`entity ${entityId} is testing`);
+    console.log(`entity ${entityId} is testing`);
     const myEntity = document.querySelector("#entity" + entityId);
     const myHealth = slateObject.health[entityId - 1];
     const myPosition = [
@@ -181,9 +184,10 @@ const entity = {
           // const myFoodItemPosition = [
           //   position
           // ]
-          if (entity.getDistance(myPosition[0], myPosition[1], position.left, position.top) < 300){
-            console.log(myFoodItem);
+          if (entity.getDistance(myPosition[0], myPosition[1], position.left, position.top) < 100){
+            // console.log(myFoodItem);
           myFoodItem.classList.add("eaten");
+          slateObject.health[entityId - 1] += food.healthBenefit;
           }
         }
       }
@@ -216,11 +220,30 @@ const entity = {
 };
 entity.init();
 
-// var intervalId = window.setTimeout(function () {
-//   entity.spawnEntity();
-// }, 2000);
 
-let intervalId = window.setInterval(function () {
+const readmeWindow = {
+  readmeFile:"README.md",
+  createReadmeWindow: function(){
+    const windowElement = document.createElement("section");
+    windowElement.innerHTML = `<button>Readme</button><iframe src="${this.readmeFile}" id="readMeFrame"></iframe>`;
+    // windowElement.setAttribute("src", this.readmeFile);
+    windowElement.setAttribute("id", "readMeContainer");
+    document.querySelector("body").appendChild(windowElement);
+  },
+  toggleWindow: function(){
+    const toggler = document.querySelector("#readMeContainer button");
+    toggler.addEventListener("click",() => {
+      document.querySelector("#readMeContainer").classList.toggle("expanded");
+    })
+  },
+  init: () => {
+    readmeWindow.createReadmeWindow();
+    readmeWindow.toggleWindow();
+    // this.createReadmeWindow();
+  }
+}
+readmeWindow.init();
+const fastRepeatingActions = window.setInterval(function () {
   const entities = document.querySelectorAll(".entity");
   // console.log(entities);
   for (i = 0; i < entities.length; i++) {
@@ -235,6 +258,7 @@ let intervalId = window.setInterval(function () {
 
 const food = {
   maxFoodItems: 33,
+  healthBenefit : 50,
   foodItem: function () {
     const foodItem = document.createElement("div");
     foodItem.className = "foodItem";
