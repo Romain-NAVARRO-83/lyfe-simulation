@@ -72,3 +72,6 @@ footer{
     background-color: rgb(39, 207, 48);
     width:10px;
 }
+.foodItem.eaten{
+    background-color: red;
+}
