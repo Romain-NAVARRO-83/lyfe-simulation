@@ -1,0 +1,74 @@
+:root{
+    --entitySize:30px;
+    --mainPadding: 3rem;
+    --darken: rgba(0,0,0,.5);
+}
+body{
+    background: rgb(29, 33, 33);
+    background: radial-gradient(circle, rgba(29, 33, 33, 1) 0%, rgba(0, 0, 0, 1) 100%);
+    padding: 0;
+    margin: 0;
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color:#fff;
+}
+.entity{
+    position:absolute;
+    border-radius:50%;
+    aspect-ratio: 1/1;
+    background-color: black;
+    box-shadow: 0px 0px 16px 8px rgba(0, 255, 42, 0.5);
+}
+.entity::after{
+    content:" ";
+    display:block;
+    width:10px;
+    height:5px;
+    background-color: #000;
+    position: absolute;
+    top:calc(50% - 2.5px);right:0;
+    margin-right:-3px;
+}
+.entity::after{
+    content:attr(id);
+    display:block;
+
+}
+footer{
+    position:fixed;
+    bottom:0;
+    left: 0;
+    display:flex;
+    justify-content: center;
+    padding: var(--mainPadding);
+    gap: var(--mainPadding);
+    width:100%;
+    background-color: var(--darken);
+    color:#fff;
+    backdrop-filter: blur(10px);
+    z-index:9;
+}
+.subslate{
+    padding: calc(var(--mainPadding) / 2);
+    background-color: var(--darken);
+    backdrop-filter: blur(10px);
+}
+.subslate > *{
+    display: flex;
+    justify-content: space-between;
+
+}
+.subslate > * > *{
+    padding:calc(var(--mainPadding) / 4);
+    flex-basis: 50%;
+}
+.foodItem{
+    position:absolute;
+    border-radius:50%;
+    aspect-ratio: 1/1;
+    background-color: rgb(39, 207, 48);
+    width:10px;
+}
