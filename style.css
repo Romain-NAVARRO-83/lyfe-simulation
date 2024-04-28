@@ -66,6 +66,14 @@ footer{
     padding:calc(var(--mainPadding) / 4);
     flex-basis: 50%;
 }
+.subslate.deceased{
+    flex-basis: 5px;
+    flex-grow: 0;
+    overflow: hidden;
+    border:solid 1px red;
+    padding:0;
+}
+.subslate.deceased *{padding:0;}
 .foodItem{
     position:absolute;
     border-radius:50%;

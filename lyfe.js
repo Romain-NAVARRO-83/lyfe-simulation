@@ -1,4 +1,14 @@
 
+const computer = {
+  getDistance: function (x1, y1, x2, y2) {
+    let y = x2 - x1;
+    let x = y2 - y1;
+    return Math.sqrt(x * x + y * y);
+  },
+  getRandom(min, max) {
+    return Math.round(Math.random() * (max - min) + min);
+  }
+};
 const slateObject = {
   entityId: [],
   entityX: [],
@@ -6,16 +16,58 @@ const slateObject = {
   targetX: [],
   targetY: [],
   health: [],
+  //   Création de la slate
+ createSlate: () => {
+  const slate = document.createElement("footer");
+  document.querySelector("body").appendChild(slate);
+  slateObject.updateSlate();
+},
+// Mise à jour des items la slate
+ updateSlate: () =>  {
+  const slate = document.querySelector("footer");
+  if (slate) {
+    document.querySelector("footer").innerHTML = "";
+    for (const myEntity in slateObject.entityId) {
+      const subslate = document.createElement("div");
+      subslate.className = "subslate";
+      // subslate.classList.add("animate__animated");
+      // subslate.classList.add("animate__bounceInUp");
+      // If deceased
+      if (slateObject.health[myEntity] <= 0){
+        subslate.classList.add("deceased");
+      } 
+
+
+
+      for (const mykey in slateObject) {
+        if (slateObject[mykey][myEntity]){
+          subslate.innerHTML += `<div><span>${mykey.replace(
+            "entity",
+            ""
+          )}</span><span>${slateObject[mykey][myEntity]}</span></div>`;
+        }
+
+        
+      }
+      slate.appendChild(subslate);
+    }
+  }
+},
+init:() => {
+  slateObject.createSlate();
+  slateObject.updateSlate();
+}
 };
+slateObject.init();
 const entity = {
   fishTank: document.querySelector("body"),
   sightRange: 500,
-  spawnPoint: [200, 200],
+  spawnPoint: [50, 50],
   lastEntityId: 0,
   size: 30,
-  movingSpeed: 1,
+  movingSpeed: 1, 
   baseHealth: 100,
-  testDistance: 500,
+  testDistance: 15,
   constructEntity: function () {
     const myEntity = document.createElement("div");
     myEntity.className = "entity";
@@ -26,8 +78,8 @@ const entity = {
   },
   spawnEntity: function () {
     const myEntity = entity.constructEntity();
-    myEntity.style.top = entity.spawnPoint[0] + "px";
-    myEntity.style.left = entity.spawnPoint[1] + "px";
+    myEntity.style.top = entity.spawnPoint[0] + "vw";
+    myEntity.style.left = entity.spawnPoint[1] + "vh";
     entity.lastEntityId++;
     myEntity.id = "entity" + entity.lastEntityId;
     // entity.selectDestination(entity.lastEntityId)
@@ -35,53 +87,35 @@ const entity = {
     slateObject.entityId.push(entity.lastEntityId);
     slateObject.entityX.push(entity.spawnPoint[0]);
     slateObject.entityY.push(entity.spawnPoint[1]);
-    slateObject.targetX.push(entity.spawnPoint[0] + 300);
-    slateObject.targetY.push(entity.spawnPoint[1] + 300);
+    slateObject.targetX.push(entity.spawnPoint[0] + 10);
+    slateObject.targetY.push(entity.spawnPoint[1] + 10);
     slateObject.health.push(entity.baseHealth);
   },
   selectDestination: function (entityId = 1) {
     const myEntity = document.querySelector("#entity" + entityId);
-    // console.log(myEntity);
+    // TODO : remplacer par value de la slate
     const currentPosition = [
       parseInt(myEntity.style.left),
       parseInt(myEntity.style.top),
     ];
-    const xMax = document.querySelector("body").offsetWidth - 50;
-    const yMax = document.querySelector("body").offsetHeight - 50;
-    // console.log(`X span ${xMax} \n Y span ${yMax}`);
-    function getrandom(min, max) {
-      return Math.random() * (max - min) + min;
-    }
+    const xMax = 90;
+    const yMax = 90;
     const destination = [
-      Math.round(
-        getrandom(
-          currentPosition[0] - entity.testDistance,
-          currentPosition[0] + entity.testDistance
+
+        computer.getRandom(
+          10,
+          xMax
+        ),
+
+        computer.getRandom(
+          10,
+          yMax
         )
-      ),
-      Math.round(
-        getrandom(
-          currentPosition[0] - entity.testDistance,
-          currentPosition[0] + entity.testDistance
-        )
-      ),
     ];
-    // On teste si c'est dans le fishTank
-    if (
-      destination[0] > 50 &&
-      destination[0] < xMax &&
-      destination[1] > 50 &&
-      destination[1] < yMax
-    ) {
+
       // console.log(destination);
       slateObject.targetX[entityId - 1] = destination[0];
       slateObject.targetY[entityId - 1] = destination[1];
-    }
-  },
-  getDistance: function (x1, y1, x2, y2) {
-    let y = x2 - x1;
-    let x = y2 - y1;
-    return Math.sqrt(x * x + y * y);
   },
   setAngle: (entityId = 1) => {
     const myEntity = document.querySelector("#entity" + entityId);
@@ -118,20 +152,27 @@ const entity = {
     ];
     // const angle360 = X;
     if (currentPosition[0] < destination[0]) {
-      myEntity.style.left = currentPosition[0] + entity.movingSpeed + "px";
-    } else {
-      myEntity.style.left = currentPosition[0] - entity.movingSpeed + "px";
+      myEntity.style.left = currentPosition[0] + entity.movingSpeed + "vw";
+    } else if (currentPosition[0] > destination[0]){
+      myEntity.style.left = currentPosition[0] - entity.movingSpeed + "vw";
     }
     if (currentPosition[1] < destination[1]) {
-      myEntity.style.top = currentPosition[1] + entity.movingSpeed + "px";
-    } else {
-      myEntity.style.top = currentPosition[1] - entity.movingSpeed + "px";
+      myEntity.style.top = currentPosition[1] + entity.movingSpeed + "vh";
+    } else if (currentPosition[1] > destination[1]){
+      myEntity.style.top = currentPosition[1] - entity.movingSpeed + "vh";
     }
+    
     // Update slateObject
     slateObject.entityX[entityId - 1] = currentPosition[0];
     slateObject.entityY[entityId - 1] = currentPosition[1];
-    updateSlate();
+    slateObject.updateSlate();
     // entity.testFoodItemProximity(entityId);
+    if (currentPosition[0] === destination[0] && currentPosition[1] === destination[1]) {
+      slateObject.targetX[entityId - 1] =10;
+    slateObject.targetY[entityId - 1] = 10;
+      entity.selectDestination(entityId);
+      console.log("arrived" + entityId);
+    }
   },
   regularSelectDestination: function () {
     window.setInterval(function () {
@@ -143,8 +184,9 @@ const entity = {
         if (randomNumber > 5) {
           entity.selectDestination(myEntityId);
         }
+
       }
-    }, 1000);
+    }, 500);
   },
   healthDecay: function () {
     window.setInterval(function () {
@@ -166,14 +208,15 @@ const entity = {
   testFoodItemProximity: function (entityId = 1) {
 
 
-    console.log(`entity ${entityId} is testing`);
+    // console.log(`entity ${entityId} is testing`);
     const myEntity = document.querySelector("#entity" + entityId);
     const myHealth = slateObject.health[entityId - 1];
     const myPosition = [
       slateObject.entityX[entityId - 1],
       slateObject.entityY[entityId - 1],
     ];
-    if (myHealth < entity.baseHealth * 0.9) {
+    // if (myHealth < entity.baseHealth * 0.9) {
+    if (myHealth > 1) {
       
       const foodItems = document.querySelectorAll(".foodItem:not(.eaten)");
       // console.log(foodItems);
@@ -184,7 +227,7 @@ const entity = {
           // const myFoodItemPosition = [
           //   position
           // ]
-          if (entity.getDistance(myPosition[0], myPosition[1], position.left, position.top) < 100){
+          if (computer.getDistance(myPosition[0], myPosition[1], position.left, position.top) < 100){
             // console.log(myFoodItem);
           myFoodItem.classList.add("eaten");
           slateObject.health[entityId - 1] += food.healthBenefit;
@@ -200,7 +243,7 @@ const entity = {
     //     window.getComputedStyle(myFoodItem).top
     //   ];
     //   console.log(foodItemPosition);
-    //   if (entity.getDistance(myPosition[0], myPosition[1],foodItemPosition[0], foodItemPosition [1]) < 200){
+    //   if (computer.getDistance(myPosition[0], myPosition[1],foodItemPosition[0], foodItemPosition [1]) < 200){
 
     //   }
     // };
@@ -262,23 +305,27 @@ const food = {
   foodItem: function () {
     const foodItem = document.createElement("div");
     foodItem.className = "foodItem";
+    foodItem.classList.add("animate__animated");
+    foodItem.classList.add("animate__bounceIn");
     return foodItem;
   },
   foodCreate: function () {
-    const xMax = document.querySelector("body").offsetWidth;
-    const yMax = document.querySelector("body").offsetHeight;
-    function getrandom(min, max) {
-      return Math.random() * (max - min) + min;
-    }
+    // const xMax = document.querySelector("body").offsetWidth;
+    // const yMax = document.querySelector("body").offsetHeight;
+    const xMax = 90;
+    const yMax = 90;
+    // function getrandom(min, max) {
+    //   return Math.random() * (max - min) + min;
+    // }
 
     for (i = 0; i < food.maxFoodItems; i++) {
       const foodPosition = [
-        Math.round(getrandom(50, xMax - 50)),
-        Math.round(getrandom(50, yMax - 50)),
+        computer.getRandom(10, xMax),
+        computer.getRandom(10, yMax),
       ];
       const foodItem = food.foodItem();
-      foodItem.style.left = foodPosition[0] + "px";
-      foodItem.style.top = foodPosition[1] + "px";
+      foodItem.style.left = foodPosition[0] + "vw";
+      foodItem.style.top = foodPosition[1] + "vh";
       document.querySelector("body").appendChild(foodItem);
     }
   },
@@ -288,31 +335,9 @@ const food = {
 };
 food.init();
 
-// Mise à jour des items la slate
-function updateSlate() {
-  const slate = document.querySelector("footer");
-  if (slate) {
-    document.querySelector("footer").innerHTML = "";
-    for (const myEntity in slateObject.entityId) {
-      const subslate = document.createElement("div");
-      subslate.className = "subslate";
-      for (const mykey in slateObject) {
-        subslate.innerHTML += `<div><span>${mykey.replace(
-          "entity",
-          ""
-        )}</span><span>${slateObject[mykey][myEntity]}</span></div>`;
-      }
-      slate.appendChild(subslate);
-    }
-  }
-}
-//   Création de la slate
-const createSlate = () => {
-  const slate = document.createElement("footer");
-  document.querySelector("body").appendChild(slate);
-  updateSlate();
-};
-createSlate();
+
+
+// createSlate();
 
 // Generative Button
 const createGenerativeButton = () => {
